@@ -1,0 +1,1 @@
+export const randomFromArray = <T extends unknown>(x: T[]): T => x[Math.floor(Math.random() * x.length)]

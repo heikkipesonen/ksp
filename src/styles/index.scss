@@ -1,0 +1,11 @@
+@import './reset.scss';
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@200&display=swap');
+
+html, body {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 14px;
+}
+
+* {
+  font-size: 1rem;
+}
