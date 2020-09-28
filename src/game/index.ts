@@ -8,19 +8,22 @@ import { elementIntersectsWithLine, lanesFromProto, toBalls, ProtoLane } from '.
 import { LaneView } from '../components/laneview'
 import { MarkLine } from '../components/markline'
 
-export const Game = (protoLanes: ProtoLane[], width: number, height: number) => <T extends PIXI.Container>(stage: T) => {
-  const state = {
-    onHold: false, // prevent holding key down and flooding app...
-    nextInterval: 1500, // next ball spawn
-    speed: 3, // game speed, updated on next ball spawn
-  }
-
-  const lanes = lanesFromProto(protoLanes)(width)
-  const targetMarkerLine = new MarkLine(width, height - height * 0.2)
-  const laneView = new LaneView()
-
-  const i = new Intervaller(state.nextInterval)
-  i.addListener(() => {
+export class Game {
+  constructor (
+    protoLanes: ProtoLane[],
+    width: number,
+    height: number,
+    private readonly lanes = lanesFromProto(protoLanes)(width),
+    private readonly targetMarkerLine = new MarkLine(width, height - height * 0.2),
+    private readonly laneView = new LaneView(),
+    private readonly state = {
+      onHold: false, // prevent holding key down and flooding app...
+      nextInterval: 1500, // next ball spawn
+      speed: 3, // game speed, updated on next ball spawn
+    },
+    private readonly intervaller = new Intervaller(state.nextInterval),
+  ) {
+    this.intervaller.addListener(() => {
       const ballSize = (width / lanes.length) / 6
       const lane = randomFromArray(lanes)
       const ball = new Ball(ballSize, lane.color, lane.key)
@@ -31,31 +34,33 @@ export const Game = (protoLanes: ProtoLane[], width: number, height: number) => 
       ball.animateTo(height + ballSize * 2, state.speed)
       laneView.addChild(ball)
 
-      i.interval = state.nextInterval
-    })
-    .start()
+      this.intervaller.interval = this.state.nextInterval
+    }).start()
+    window.addEventListener('keydown', this.handleKeyDown)
+    window.addEventListener('keyup', this.handleKeyUp)
+  }
 
-  window.addEventListener('keydown', e => {
-    if (state.onHold === false) {
-      state.onHold = true
-      const maybeLane = lanes.find(x => x.key === e.key.toUpperCase())
+  private handleKeyDown = (e: KeyboardEvent) => {
+    if (this.state.onHold === false) {
+      this.state.onHold = true
+      const maybeLane = this.lanes.find(x => x.key === e.key.toUpperCase())
 
       if (maybeLane) {
-        toBalls(laneView.children)
+        toBalls(this.laneView.children)
           .filter(x => x.laneId === maybeLane.key)
-          .filter(elementIntersectsWithLine(targetMarkerLine))
+          .filter(elementIntersectsWithLine(this.targetMarkerLine))
           .forEach(x => x.destroy())
       }
     }
-  })
+  }
 
-  // prevent holding key down
-  window.addEventListener('keyup', e => {
-    state.onHold = false
-  })
+  private handleKeyUp = () => {
+    this.state.onHold = false
+  }
 
-  stage.addChild(laneView)
-  stage.addChild(targetMarkerLine)
-
-  return stage
+  public addTo = (container: PIXI.Container) => {
+    container.addChild(this.laneView)
+    container.addChild(this.targetMarkerLine)
+    return this
+  }
 }

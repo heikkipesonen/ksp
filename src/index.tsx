@@ -1,10 +1,9 @@
+import * as PIXI from 'pixi.js'
 import TWEEN from '@tweenjs/tween.js'
 
 import './styles/reset.scss'
 import { Game } from './game'
-import * as PIXI from 'pixi.js'
 import { ProtoLane } from './game/support'
-
 
 const LANES: ProtoLane[] = [
   {
@@ -33,4 +32,4 @@ app.ticker.add(() => {
 })
 
 document.body.appendChild(app.view)
-Game(LANES, app.view.width, app.view.height)(app.stage)
+new Game(LANES, app.view.width, app.view.height).addTo(app.stage)
