@@ -16,10 +16,15 @@ export class Game {
     private readonly lanes = lanesFromProto(protoLanes)(width),
     private readonly targetMarkerLine = new MarkLine(width, height - height * 0.2),
     private readonly laneView = new LaneView(),
+
     private readonly state = {
       onHold: false, // prevent holding key down and flooding app...
-      nextInterval: 1500, // next ball spawn
-      speed: 3, // game speed, updated on next ball spawn
+      nextInterval: 1500, // next ball spawn, or maybe next after that... who knows?
+      // multiplier for the time that the ball takes to drop to the bottom of the screen
+      // speed is screen height in pixels * speed = animation duration in milliseconds
+      // affects on next spawning ball speed
+      // lower is faster
+      speed: 3,
     },
     private readonly intervaller = new Intervaller(state.nextInterval),
   ) {
