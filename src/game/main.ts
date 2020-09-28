@@ -54,19 +54,17 @@ export const Game = (width: number, height: number) => <T extends PIXI.Container
       state.onHold = true
       const char = e.key.toUpperCase()
       const maybeKey = maybeKSP(char)
-      if (isRight(maybeKey))  {
+      if (isRight(maybeKey)) {
         const objects = elementIntersectsWithLine(marker, laneView.children)
+        objects.forEach(x => {
+          const color = x.lane.color
+          const key = COLOR_KEYS[color]
+          const isCorrect = key === maybeKey.right
 
-        objects
-          .filter(x => {
-            const color = x.lane.color
-            const key = COLOR_KEYS[color]
-            const isCorrect = key === maybeKey.right
-            console.log(key, maybeKey.right, isCorrect)
-            if(isCorrect) {
-              x.destroy()
-            }
-          })
+          if (isCorrect) {
+            x.destroy()
+          }
+        })
       }
     }
 
@@ -81,12 +79,16 @@ export const Game = (width: number, height: number) => <T extends PIXI.Container
   return stage
 }
 
+function isBall(x: unknown): x is Ball {
+  return x instanceof Ball
+}
+
 const elementIntersectsWithLine = <T extends PIXI.DisplayObject>(line: PIXI.Graphics, objects: T[]): Ball[] => {
   const linePosition = line.getBounds()
   return objects
-  .filter(x => x instanceof Ball)
-  .filter(x => {
-    const bounds = x.getBounds()
-    return bounds.top <= linePosition.y && bounds.bottom >= linePosition.bottom
-  }) as any as Ball[]
+    .filter(x => {
+      const bounds = x.getBounds()
+      return bounds.top <= linePosition.y && bounds.bottom >= linePosition.bottom
+    })
+    .filter(isBall) as any as Ball[] // TODO: very unsafe
 }

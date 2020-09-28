@@ -1,4 +1,4 @@
-import TWEEN, { Tween } from '@tweenjs/tween.js'
+import TWEEN from '@tweenjs/tween.js'
 import * as PIXI from 'pixi.js'
 interface Lane {
   color: number
@@ -21,7 +21,7 @@ export const renderBall = (obj: Ball, to: number, speed: number) => <T extends P
 
 export const markLine = (width: number, height: number) =>
   new PIXI.Graphics()
-    .lineStyle(10, 0x777777, 0.5)
+    .lineStyle(10, 0xFF7777, 0.5)
     .moveTo(0, height)
     .lineTo(width, height)
 
@@ -38,17 +38,24 @@ export class Ball extends PIXI.Graphics {
       .drawCircle(0, 0, size)
       .endFill()
   }
-  public animation: any = null
 
-  public destroy = () => {
-    this.parent.removeChild(this)
-    if (this.animation){
-      this.animation.stop()
-    }
-  }
+  // TODO: can be called multiple times
+  public destroy = () =>
+    new TWEEN.Tween({scale: 1})
+      .to({scale: 0})
+      .easing(TWEEN.Easing.Exponential.In)
+      .duration(300)
+      .onUpdate(position => {
+        this.scale.x = position.scale
+        this.scale.y = position.scale
+      })
+      .onComplete(() => {
+        this.parent && this.parent.removeChild(this)
+      })
+      .start(TWEEN.now())
 
-  public animateTo = (to: number, speed: number) => {
-    const animation = new TWEEN.Tween({
+  public animateTo = (to: number, speed: number) =>
+    new TWEEN.Tween({
       x: this.x,
       y: this.y,
     })
@@ -64,6 +71,4 @@ export class Ball extends PIXI.Graphics {
       })
       .start(TWEEN.now())
 
-    return animation
-  }
 }
