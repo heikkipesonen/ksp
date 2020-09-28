@@ -1,5 +1,5 @@
 
-// trigger callback on frame after a specified amount of time has passed
+// a thing to trigger callback on animationFrame after a specified amount of time has passed
 export class Intervaller {
   constructor (
     public interval: number,
