@@ -38,9 +38,9 @@ export class Game {
 
       ball.animateTo(height + ballSize * 2, state.speed)
       laneView.addChild(ball)
-
-      this.intervaller.interval = this.state.nextInterval
+      this.intervaller.setInterval(this.state.nextInterval)
     }).start()
+
     window.addEventListener('keydown', this.handleKeyDown)
     window.addEventListener('keyup', this.handleKeyUp)
   }
@@ -59,9 +59,8 @@ export class Game {
     }
   }
 
-  private handleKeyUp = () => {
+  private handleKeyUp = () =>
     this.state.onHold = false
-  }
 
   public addTo = (container: PIXI.Container) => {
     container.addChild(this.laneView)
