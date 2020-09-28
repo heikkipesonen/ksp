@@ -17,6 +17,11 @@ export class Intervaller {
     this.handle = window.requestAnimationFrame(this.update)
   }
 
+  public setInterval = (interval: number) => {
+    this.interval = interval
+    return this
+  }
+
   public addListener = (x: () => void) => {
     this.listeners.push(x)
     return this
