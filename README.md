@@ -1,1 +1,3 @@
 # ksp
+
+`yarn start`

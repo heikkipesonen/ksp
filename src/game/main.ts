@@ -1,9 +1,10 @@
 import * as PIXI from 'pixi.js'
 import { DropShadowFilter } from '@pixi/filter-drop-shadow'
+import { isRight } from 'fp-ts/lib/Either'
 
 import { randomFromArray } from '../support'
 import { Intervaller } from './interval'
-import { createBall, generateLanes, markLine, renderPallero } from './support'
+import { createBall, generateLanes, markLine, renderBall, Ball } from './support'
 import { maybeKSP } from '../domain/ksp'
 
 export const Game = (width: number, height: number) => <T extends PIXI.Container>(stage: T) => {
@@ -15,41 +16,58 @@ export const Game = (width: number, height: number) => <T extends PIXI.Container
     0x00EE00,
     0x0000EE,
   ]
+  const COLOR_KEYS: Record<number, string> = {
+    0xEE0000: 'K',
+    0x00EE00: 'S',
+    0x0000EE: 'P',
+  }
 
   const LANE_COUNT = LANE_COLORS.length
   const BALL_SIZE = (width / LANE_COUNT) / 6
   const lanes = generateLanes(LANE_COLORS)(width)
 
+  const marker = markLine(width, height - height * 0.2)
   const laneView = new PIXI.Container()
   laneView.filters = [
     new DropShadowFilter({
       distance: 10,
-      blur: 30,
+      blur: 20,
     })
   ]
 
-  new Intervaller(1000)
+  new Intervaller(1500)
     .addListener(() => {
       const lane = randomFromArray(lanes)
-      const ball = createBall(BALL_SIZE, lane.color)
+      const ball = createBall(BALL_SIZE, lane)
 
       ball.y = -BALL_SIZE
       ball.x = lane.position
 
-      renderPallero(ball, height + BALL_SIZE * 2, 1.5)(laneView)
+      renderBall(ball, height + BALL_SIZE * 2, 3)(laneView)
     })
     .start()
 
-
-  stage.addChild(laneView)
-  stage.addChild(markLine(width, height - height * 0.2))
 
 
   window.addEventListener('keydown', e => {
     if (state.onHold === false) {
       state.onHold = true
       const char = e.key.toUpperCase()
-      console.log(maybeKSP(char))
+      const maybeKey = maybeKSP(char)
+      if (isRight(maybeKey))  {
+        const objects = elementIntersectsWithLine(marker, laneView.children)
+
+        objects
+          .filter(x => {
+            const color = x.lane.color
+            const key = COLOR_KEYS[color]
+            const isCorrect = key === maybeKey.right
+            console.log(key, maybeKey.right, isCorrect)
+            if(isCorrect) {
+              x.destroy()
+            }
+          })
+      }
     }
 
   })
@@ -57,5 +75,18 @@ export const Game = (width: number, height: number) => <T extends PIXI.Container
     state.onHold = false
   })
 
+  stage.addChild(laneView)
+  stage.addChild(marker)
+
   return stage
+}
+
+const elementIntersectsWithLine = <T extends PIXI.DisplayObject>(line: PIXI.Graphics, objects: T[]): Ball[] => {
+  const linePosition = line.getBounds()
+  return objects
+  .filter(x => x instanceof Ball)
+  .filter(x => {
+    const bounds = x.getBounds()
+    return bounds.top <= linePosition.y && bounds.bottom >= linePosition.bottom
+  }) as any as Ball[]
 }
