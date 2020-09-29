@@ -3,22 +3,15 @@ import TWEEN from '@tweenjs/tween.js'
 
 import './styles/reset.scss'
 import { Game } from './game'
-import { BallProto } from './domain/ksp'
+import { KSP } from './domain/ksp'
 
-const SpawnObjects: BallProto[] = [
-  {
-    color: 0x3492eb,
-    key: 'K'
-  },
-  {
-    color: 0x34ebba,
-    key: 'S'
-  },
-  {
-    color: 0xd634eb,
-    key: 'P'
-  },
-]
+export const COLOR_MAP: Record<KSP, number> = {
+  K: 0x3492eb,
+  S: 0x34ebba,
+  P: 0xd634eb,
+}
+
+const SpawnObjects: KSP[] = ['K', 'S', 'P']
 
 const app = new PIXI.Application({
   resizeTo: window,

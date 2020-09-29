@@ -1,13 +1,14 @@
 import { DropShadowFilter } from '@pixi/filter-drop-shadow'
 import TWEEN from '@tweenjs/tween.js'
 import * as PIXI from 'pixi.js'
-import { BallProto } from '../domain/ksp'
+import { KSP } from '../domain/ksp'
+import { baseTextStyle } from './text-styles'
 
 export class Ball extends PIXI.Graphics {
   constructor(
     size: number,
     color: number,
-    public readonly key: BallProto['key'],
+    public readonly key: KSP,
 
     // prevent multiple animations from running at the same time for same object
     private deleteAnimation: any = null,
@@ -19,9 +20,7 @@ export class Ball extends PIXI.Graphics {
     this.endFill()
 
     const p = new PIXI.Text(key, {
-      fontFamily: "Impact",
-      fontSize: 64,
-      fontWeight: 100,
+      ...baseTextStyle,
       fill: 0xFFFFFF,
     })
 
