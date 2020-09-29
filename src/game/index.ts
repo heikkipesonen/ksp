@@ -2,9 +2,9 @@ import * as PIXI from 'pixi.js'
 
 import { randomFromArray } from '../support'
 import { Intervaller } from '../components/interval'
-import { Ball } from '../components/ball'
+import { Ball, toBalls } from '../components/ball'
 
-import { elementIntersectsWithLine, lanesFromProto, toBalls, ProtoLane } from './support'
+import { elementIntersectsWithLine, lanesFromProto, ProtoLane } from './support'
 import { LaneView } from '../components/laneview'
 import { MarkLine } from '../components/markline'
 
@@ -17,6 +17,7 @@ export class Game {
     private readonly targetMarkerLine = new MarkLine(width, height - height * 0.2),
     private readonly laneView = new LaneView(),
 
+    private readonly intervalTolerance = 500, // + or -
     private readonly state = {
       onHold: false, // prevent holding key down and flooding app...
       nextInterval: 1500, // next ball spawn, or maybe next after that... who knows?
@@ -38,7 +39,9 @@ export class Game {
 
       ball.animateTo(height + ballSize * 2, state.speed)
       laneView.addChild(ball)
-      this.intervaller.setInterval(this.state.nextInterval)
+
+
+      this.intervaller.setInterval(this.state.nextInterval + Math.random() * this.intervalTolerance)
     }).start()
 
     window.addEventListener('keydown', this.handleKeyDown)
