@@ -21,5 +21,8 @@ export const lanesFromProto = (proto: ProtoLane[]) => (width: number): Lane[] =>
 export const elementIntersectsWithLine = (line: PIXI.DisplayObject) => (element: PIXI.DisplayObject) => {
   const linePosition = line.getBounds()
   const elementBounds = element.getBounds()
-  return elementBounds.top <= linePosition.y && elementBounds.bottom >= linePosition.bottom
+
+  const topIsAboveLine = elementBounds.top <= linePosition.top
+  const bottomIsBelowLine = elementBounds.bottom >= linePosition.bottom
+  return topIsAboveLine && bottomIsBelowLine
 }
