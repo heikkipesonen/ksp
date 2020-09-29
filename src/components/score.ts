@@ -1,6 +1,6 @@
 import TWEEN from '@tweenjs/tween.js'
 import * as PIXI from 'pixi.js'
-import { textShadow, titleTextStyle } from './text-styles'
+import { titleTextStyle, applyTextShadow } from '../support/text-styles'
 
 export class Score extends PIXI.Container {
   constructor(
@@ -11,7 +11,7 @@ export class Score extends PIXI.Container {
     private animation: any = null
   ) {
     super()
-    textShadow(this)
+    applyTextShadow(this)
     this.addChild(this.display)
   }
 

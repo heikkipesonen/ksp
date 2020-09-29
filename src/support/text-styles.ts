@@ -14,7 +14,7 @@ export const titleTextStyle = {
   strokeThickness: 4,
 }
 
-export const textShadow = <T extends PIXI.DisplayObject>(x: T):T => {
+export const applyTextShadow = <T extends PIXI.DisplayObject>(x: T):T => {
   x.filters = [
     ...(x.filters ? x.filters : []),
     new DropShadowFilter({

@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import { baseTextStyle, textShadow } from './text-styles'
+import { baseTextStyle, applyTextShadow } from '../support/text-styles'
 
 export class Title extends PIXI.Text {
   constructor(text: string, width: number, size = 64) {
@@ -11,7 +11,7 @@ export class Title extends PIXI.Text {
       strokeThickness: 4,
     })
 
-    textShadow(this)
+    applyTextShadow(this)
 
     this.x = width / 2
     this.y = this.height

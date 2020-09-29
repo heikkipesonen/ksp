@@ -2,7 +2,7 @@ import { DropShadowFilter } from '@pixi/filter-drop-shadow'
 import TWEEN from '@tweenjs/tween.js'
 import * as PIXI from 'pixi.js'
 import { KSP } from '../domain/ksp'
-import { baseTextStyle } from './text-styles'
+import { baseTextStyle } from '../support/text-styles'
 
 export class Ball extends PIXI.Graphics {
   constructor(

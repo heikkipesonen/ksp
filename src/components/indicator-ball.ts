@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js'
 import { KSP } from '../domain/ksp'
-import { baseTextStyle } from './text-styles'
+import { baseTextStyle } from '../support/text-styles'
 
 export class IndicatorBall extends PIXI.Graphics {
   constructor(
