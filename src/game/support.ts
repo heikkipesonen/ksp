@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js'
-import { Ball } from '../components/ball'
 
 export interface Lane {
   key: string
@@ -21,14 +20,6 @@ export const lanesFromProto = (proto: ProtoLane[]) => (width: number): Lane[] =>
 
 export const elementIntersectsWithLine = (line: PIXI.DisplayObject) => (element: PIXI.DisplayObject) => {
   const linePosition = line.getBounds()
-  const bounds = element.getBounds()
-  return bounds.top <= linePosition.y && bounds.bottom >= linePosition.bottom
-}
-
-export function isBall(x: unknown): x is Ball {
-  return x instanceof Ball
-}
-
-export function toBalls(a: unknown[]): Ball[] {
-  return a.filter(isBall)
+  const elementBounds = element.getBounds()
+  return elementBounds.top <= linePosition.y && elementBounds.bottom >= linePosition.bottom
 }

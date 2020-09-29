@@ -17,8 +17,15 @@ export class Ball extends PIXI.Graphics {
       .endFill()
   }
 
-  public destroy = () =>
-    this.deleteAnimation ? null :
+  public destroy = () => {
+    if (this.deleteAnimation) {
+      return
+    }
+
+    if (this.animation) {
+      this.animation.stop()
+    }
+
     this.deleteAnimation = new TWEEN.Tween({ scale: 1 })
       .to({ scale: 0 })
       .easing(TWEEN.Easing.Exponential.In)
@@ -29,9 +36,12 @@ export class Ball extends PIXI.Graphics {
       })
       .onComplete(() => this.parent && this.parent.removeChild(this))
       .start(TWEEN.now())
+  }
 
-  public animateTo = (to: number, speed: number) =>
-    this.animation ? null :
+  public animateTo = (to: number, speed: number) => {
+    if (this.animation) {
+      return
+    }
     this.animation = new TWEEN.Tween({
       x: this.x,
       y: this.y,
@@ -48,5 +58,13 @@ export class Ball extends PIXI.Graphics {
       })
       .start(TWEEN.now())
       .onComplete(() => this.parent && this.parent.removeChild(this))
+  }
+}
 
+export function isBall(x: unknown): x is Ball {
+  return x instanceof Ball
+}
+
+export function toBalls(a: unknown[]): Ball[] {
+  return a.filter(isBall)
 }
