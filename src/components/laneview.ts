@@ -3,7 +3,7 @@ import * as O from 'fp-ts/lib/Option'
 
 import { COLOR_MAP } from '../domain/color-map'
 import { KSP, winnerKeyFor } from '../domain/ksp'
-import { randomFromArray } from '../support'
+import { addChildrenTo, move, randomFromArray } from '../support'
 import { Ball } from './ball'
 import { findIndicatorBalls, IndicatorBall } from './indicator-ball'
 import { MarkLine } from './markline'
@@ -18,19 +18,21 @@ export class LaneView extends PIXI.Container {
     private readonly targetMarkerLine = new MarkLine(width, height - 200),
   ) {
     super()
-    this.addChild(this.targetMarkerLine)
-    this.addChild(this.indicatorContainer)
+    addChildrenTo([
+      this.targetMarkerLine,
+      this.indicatorContainer,
+    ])(this)
+
     // create lane icons
-    this.ballTypes
+    addChildrenTo(this.ballTypes
       // opposite key of lane balls (winning key icon)
       .map(winnerKeyFor)
       .map(x => new IndicatorBall(80, COLOR_MAP[x], x))
       // center objects
-      .forEach((x, i) => {
-        x.position.x = this.getLaneCenter(i)
-        x.position.y = this.targetMarkerLine.y + x.height / 2
-        this.addChild(x)
-      })
+      .map((x, i) =>
+        move(x, this.getLaneCenter(i), this.targetMarkerLine.y + x.height / 2)
+      )
+    )(this)
   }
 
   // find marker icon for a lane by key..

@@ -22,3 +22,8 @@ export const elementIntersectsWithLine = (line: PIXI.DisplayObject) => (element:
   const bottomIsBelowLine = elementBounds.bottom >= linePosition.bottom
   return topIsAboveLine && bottomIsBelowLine
 }
+
+export const addChildrenTo = (elements: PIXI.DisplayObject[]) => <T extends PIXI.Container>(target: T): T => {
+  elements.forEach(x => target.addChild(x))
+  return target
+}

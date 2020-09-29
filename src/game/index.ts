@@ -12,7 +12,7 @@ import { Background } from '../components/background'
 import { Score } from '../components/score'
 
 import { shake, wobble } from '../support/animations'
-import { elementIntersectsWithLine, move } from '../support'
+import { addChildrenTo, elementIntersectsWithLine, move } from '../support'
 
 export class Game {
   constructor(
@@ -38,13 +38,13 @@ export class Game {
     },
     private readonly spawner = new Intervaller(state.nextInterval),
   ) {
-    [
+    addChildrenTo([
       this.background,
       this.laneView,
       this.title,
       this.subTitle,
       this.scoreCounter,
-    ].forEach(x => this.view.addChild(x))
+    ])(this.view)
 
     window.addEventListener('keydown', this.handleKeyDown)
     window.addEventListener('keyup', this.handleKeyUp)
