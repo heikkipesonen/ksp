@@ -1,21 +1,18 @@
 import * as PIXI from 'pixi.js'
 
 export interface Lane {
-  key: string
-  color: number
   position: number
 }
 
-export interface ProtoLane {
+export interface ProtoObjects {
   key: string
   color: number
 }
 
-export const lanesFromProto = (proto: ProtoLane[]) => (width: number): Lane[] =>
-  proto
-    .map((lane, i) => ({
-      ...lane,
-      position: (width / proto.length * i) + (width / proto.length) / 2,
+export const lanesFromProto = (count: number) => (width: number): Lane[] =>
+  Array(count).fill(false)
+    .map((_, i) => ({
+      position: (width / count * i) + (width / count) / 2,
     }))
 
 export const elementIntersectsWithLine = (line: PIXI.DisplayObject) => (element: PIXI.DisplayObject) => {

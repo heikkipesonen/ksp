@@ -6,8 +6,8 @@ export class LaneView extends PIXI.Container {
     super()
     this.filters = [
       new DropShadowFilter({
-        distance: 10,
-        blur: 20,
+        distance: 1,
+        blur: 4,
       })
     ]
   }

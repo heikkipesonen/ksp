@@ -5,59 +5,63 @@ export class Ball extends PIXI.Graphics {
   constructor(
     size: number,
     color: number,
-    public readonly laneId: string,
+    public readonly key: string,
 
     // prevent multiple animations from running at the same time for same object
     private deleteAnimation: any = null,
     private animation: any = null,
   ) {
     super()
-    this.beginFill(color)
-      .drawCircle(0, 0, size)
-      .endFill()
+    this.lineStyle(8, color)
+    this.drawCircle(0, 0, size)
+
+    const p = new PIXI.Text(key, { fontSize: 48, fill: color })
+
+    p.x = -p.width / 2
+    p.y = -p.height / 2
+
+    this.addChild(p)
   }
 
   public destroy = () => {
-    if (this.deleteAnimation) {
-      return
+    if (!this.deleteAnimation) {
+
+      this.deleteAnimation = new TWEEN.Tween({ scale: 1 })
+        .to({ scale: 0 })
+        .easing(TWEEN.Easing.Exponential.In)
+        .duration(300)
+        .onUpdate(position => {
+          this.scale.x = position.scale
+          this.scale.y = position.scale
+        })
+        .onComplete(() => this.parent && this.parent.removeChild(this))
+        .start(TWEEN.now())
     }
 
-    if (this.animation) {
-      this.animation.stop()
-    }
-
-    this.deleteAnimation = new TWEEN.Tween({ scale: 1 })
-      .to({ scale: 0 })
-      .easing(TWEEN.Easing.Exponential.In)
-      .duration(300)
-      .onUpdate(position => {
-        this.scale.x = position.scale
-        this.scale.y = position.scale
-      })
-      .onComplete(() => this.parent && this.parent.removeChild(this))
-      .start(TWEEN.now())
+    return this
   }
 
   public animateTo = (to: number, speed: number) => {
-    if (this.animation) {
-      return
-    }
-    this.animation = new TWEEN.Tween({
-      x: this.x,
-      y: this.y,
-    })
-      .to({
-        y: to,
+    if (!this.animation) {
+      this.animation = new TWEEN.Tween({
         x: this.x,
+        y: this.y,
       })
-      .duration(to * speed)
-      .easing(TWEEN.Easing.Linear.None)
-      .onUpdate(position => {
-        this.x = position.x
-        this.y = position.y
-      })
-      .start(TWEEN.now())
-      .onComplete(() => this.parent && this.parent.removeChild(this))
+        .to({
+          y: to,
+          x: this.x,
+        })
+        .duration(to * speed)
+        .easing(TWEEN.Easing.Linear.None)
+        .onUpdate(position => {
+          this.x = position.x
+          this.y = position.y
+        })
+        .start(TWEEN.now())
+        .onComplete(() => this.parent && this.parent.removeChild(this))
+    }
+
+    return this
   }
 }
 

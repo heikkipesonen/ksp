@@ -3,19 +3,19 @@ import TWEEN from '@tweenjs/tween.js'
 
 import './styles/reset.scss'
 import { Game } from './game'
-import { ProtoLane } from './game/support'
+import { ProtoObjects } from './game/support'
 
-const LANES: ProtoLane[] = [
+const SpawnObjects: ProtoObjects[] = [
   {
-    color: 0xEE0000,
+    color: 0x3492eb,
     key: 'K'
   },
   {
-    color: 0x00EE00,
+    color: 0x34ebba,
     key: 'S'
   },
   {
-    color: 0x0000EE,
+    color: 0xd634eb,
     key: 'P'
   },
 ]
@@ -32,4 +32,4 @@ app.ticker.add(() => {
 })
 
 document.body.appendChild(app.view)
-new Game(LANES, app.view.width, app.view.height).addTo(app.stage)
+new Game(SpawnObjects, app.view.width, app.view.height).addTo(app.stage).start()
