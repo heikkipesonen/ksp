@@ -1,3 +1,4 @@
+import * as PIXI from 'pixi.js'
 import TWEEN from '@tweenjs/tween.js'
 
 export const wobble = <T extends PIXI.DisplayObject>(target: T): T => {

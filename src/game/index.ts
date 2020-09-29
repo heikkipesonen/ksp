@@ -8,10 +8,10 @@ import { Intervaller } from '../components/interval'
 import { Ball, toBalls } from '../components/ball'
 import { LaneView } from '../components/laneview'
 import { Title } from '../components/title'
-import { shake, wobble } from '../components/animations'
 import { Background } from '../components/background'
 import { Score } from '../components/score'
 
+import { shake, wobble } from '../support/animations'
 import { elementIntersectsWithLine, move } from '../support'
 
 export class Game {
