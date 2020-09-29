@@ -1,6 +1,6 @@
 
 import * as PIXI from 'pixi.js'
-import { elementIntersectsWithLine } from "../support"
+import { elementIntersectsWithLine } from "../"
 
 describe('Support', () => {
   describe('intersection', () => {
@@ -18,6 +18,7 @@ describe('Support', () => {
     }
 
 
+    // lazyass testing..
     [0, 1, 2, 50, 100, 199, 200].forEach(testIntersection(true));
     [-100, -101, -1, 201, 400, 500].forEach(testIntersection(false));
   })

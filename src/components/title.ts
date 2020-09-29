@@ -1,23 +1,17 @@
-import { DropShadowFilter } from '@pixi/filter-drop-shadow'
 import * as PIXI from 'pixi.js'
-import { baseTextStyle } from './text-styles'
+import { baseTextStyle, textShadow } from './text-styles'
 
 export class Title extends PIXI.Text {
-  constructor(text: string, width: number) {
+  constructor(text: string, width: number, size = 64) {
     super(text.toUpperCase(), {
       ...baseTextStyle,
+      fontSize: size,
       fill: 0xff8800,
       stroke: 0x000000,
       strokeThickness: 4,
     })
 
-    this.filters = [
-      new DropShadowFilter({
-        distance: 2,
-        blur: 5,
-        alpha: 0.6,
-      })
-    ]
+    textShadow(this)
 
     this.x = width / 2
     this.y = this.height

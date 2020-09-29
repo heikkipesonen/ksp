@@ -1,29 +1,31 @@
 import * as PIXI from 'pixi.js'
 import * as E from 'fp-ts/lib/Either'
-
-import { Intervaller } from '../components/interval'
-import { Ball, toBalls } from '../components/ball'
-
-import { elementIntersectsWithLine } from './support'
-import { LaneView } from '../components/laneview'
+import { isSome } from 'fp-ts/lib/Option'
 
 import { maybeKSP, maybeWin, KSP } from '../domain/ksp'
 
+import { Intervaller } from '../components/interval'
+import { Ball, toBalls } from '../components/ball'
+import { LaneView } from '../components/laneview'
 import { Title } from '../components/title'
 import { shake, wobble } from '../components/animations'
 import { Background } from '../components/background'
-import { isSome } from 'fp-ts/lib/Option'
+import { Score } from '../components/score'
+
+import { elementIntersectsWithLine, move } from '../support'
 
 export class Game {
-  constructor (
+  constructor(
     ballTypes: KSP[],
-    private width: number,
+    width: number,
     private height: number,
 
     private readonly view = new PIXI.Container(),
     private readonly title = wobble(new Title('KSP-hero', width)),
-    private readonly background = new Background(width, height, 30),
-    private readonly laneView = new LaneView(ballTypes, 600, height),
+    private readonly subTitle = move(new Title('fukken borin\'', width, 24), 0, -10),
+    private readonly background = new Background(width, height, 40),
+    private readonly laneView = move(new LaneView(ballTypes, 600, height), width / 2 - 300, 0),
+    private readonly scoreCounter = move(new Score(0), 100, 10),
     private readonly intervalTolerance = 500,
     private readonly state = {
       onHold: false, // prevent holding key down and flooding app...
@@ -36,11 +38,13 @@ export class Game {
     },
     private readonly spawner = new Intervaller(state.nextInterval),
   ) {
-    this.laneView.x = this.width / 2 - this.laneView.width / 2
-    this.view.addChild(this.background)
-    this.view.addChild(this.laneView)
-
-    this.view.addChild(this.title)
+    [
+      this.background,
+      this.laneView,
+      this.title,
+      this.subTitle,
+      this.scoreCounter,
+    ].forEach(x => this.view.addChild(x))
 
     window.addEventListener('keydown', this.handleKeyDown)
     window.addEventListener('keyup', this.handleKeyUp)
@@ -52,8 +56,8 @@ export class Game {
       this.laneView.addChild(
         this.sendBallToBottom(
           wobble(this.laneView.spawnBallToRandomLane())
-          )
         )
+      )
       // update spawner interval to adjust game speed
       // const sign = (Math.random() * 100) < 50 ? -1 : 1
       this.spawner.setInterval(this.state.nextInterval + Math.random() * this.intervalTolerance)
@@ -74,17 +78,29 @@ export class Game {
         if (isSome(maybeMarkerObject)) {
           shake(maybeMarkerObject.value)
         }
-        this.applyKeyToBallObjects(maybeKSPKey.right)
+        this.maybeHitMaybeMiss(maybeKSPKey.right)
       }
     }
   }
 
-  private applyKeyToBallObjects = (key: KSP) =>
-    this.getIntersectingBalls()
-      .filter(x => maybeWin(key)(x.key))
-      .forEach(x => {
-        x.destroy()
-      })
+  private maybeHitMaybeMiss = (key: KSP) => {
+    const hitTargets = this.getIntersectingBalls().filter(x => maybeWin(key)(x.key))
+    const hasHit = hitTargets.length > 0
+
+    if (hasHit) {
+      this.onHit(hitTargets)
+    } else {
+      this.onMiss()
+    }
+  }
+
+  private onHit = (targets: Ball[]) => {
+    this.scoreCounter.add(100)
+    targets.forEach(x => x.destroy())
+  }
+  private onMiss = () => {
+    this.scoreCounter.add(-25)
+  }
 
   private getIntersectingBalls = () =>
     toBalls(this.laneView.children)
