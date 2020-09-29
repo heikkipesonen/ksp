@@ -4,8 +4,10 @@ export class MarkLine extends PIXI.Graphics {
   constructor(width: number, height: number) {
     super()
     this
-      .lineStyle(10, 0xFF7777, 0.5)
-      .moveTo(0, height)
-      .lineTo(width, height)
+      .lineStyle(10, 0xfc2663)
+      .moveTo(0, 0)
+      .lineTo(width, 0)
+
+    this.y = height
   }
 }

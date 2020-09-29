@@ -23,10 +23,16 @@ export type KSP = K | S | P
 
 export const maybeKSP = (a: unknown) => t.union([K,S,P]).decode(a)
 
-export const maybeWin = (b: KSP) => (a: KSP) =>
+export const maybeWin = (a: KSP) => (b: KSP) =>
   (isK(a) && isS(b)) ||
   (isP(a) && isK(b)) ||
   (isS(a) && isP(b))
 
 export const randomKSP = (): KSP =>
   [K.value, S.value, P.value][Math.floor(Math.random() * 3)]
+
+
+export interface BallProto {
+  color: number
+  key: KSP
+}

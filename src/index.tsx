@@ -3,9 +3,9 @@ import TWEEN from '@tweenjs/tween.js'
 
 import './styles/reset.scss'
 import { Game } from './game'
-import { ProtoObjects } from './game/support'
+import { BallProto } from './domain/ksp'
 
-const SpawnObjects: ProtoObjects[] = [
+const SpawnObjects: BallProto[] = [
   {
     color: 0x3492eb,
     key: 'K'
@@ -32,4 +32,6 @@ app.ticker.add(() => {
 })
 
 document.body.appendChild(app.view)
-new Game(SpawnObjects, app.view.width, app.view.height).addTo(app.stage).start()
+new Game(SpawnObjects, app.view.width, app.view.height)
+  .addTo(app.stage)
+  .start()
